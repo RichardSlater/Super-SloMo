@@ -39,7 +39,18 @@ def extract_frames(videos, inDir, outDir):
     for video in videos:
         os.mkdir(os.path.join(outDir, os.path.splitext(video)[0]))
         try:
-            subprocess.check_call([os.path.join(args.ffmpeg_dir, "ffmpeg"), '-i', os.path.join(inDir, video), '-vf', 'scale={}:{}'.format(args.img_width, args.img_height), '-vsync', '0', '-qscale:v', '2', '{}/%09d.jpg'.format(os.path.join(outDir, os.path.splitext(video)[0]))])
+            cmd = [
+                os.path.join(args.ffmpeg_dir, "ffmpeg"), 
+                '-i', os.path.join(inDir, video),
+                '-c:v', 'mjpeg',
+                '-vf', 'scale={}:{}'.format(args.img_width, args.img_height),
+                '-vsync', 'vfr',
+                '-qscale:v', '2',
+                '{}/%09d.jpg'.format(os.path.join(outDir, os.path.splitext(video)[0]))]
+            print('****************** COMMAND ******************')
+            print(' '.join(cmd))
+            print('*********************************************')
+            subprocess.check_call(cmd)
         except subprocess.CalledProcessError:
             print("Error converting file:{}. Exiting.".format(video))
 
@@ -89,6 +100,12 @@ def main():
     trainPath        = os.path.join(args.dataset_folder, "train")
     testPath         = os.path.join(args.dataset_folder, "test")
     validationPath   = os.path.join(args.dataset_folder, "validation")
+
+    rmtree(extractPath,     ignore_errors=True)
+    rmtree(trainPath,       ignore_errors=True)
+    rmtree(testPath,        ignore_errors=True)
+    rmtree(validationPath,  ignore_errors=True)
+
     os.mkdir(extractPath)
     os.mkdir(trainPath)
     os.mkdir(testPath)
