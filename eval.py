@@ -70,7 +70,7 @@ def interpolate_batch(frames, factor):
 
         ft0f = io[:, :2, :, :] + ft0
         ft1f = io[:, 2:4, :, :] + ft1
-        vt0 = F.sigmoid(io[:, 4:5, :, :])
+        vt0 = torch.sigmoid(io[:, 4:5, :, :])
         vt1 = 1 - vt0
 
         gi0ft0f = back_warp(i0, ft0f)
